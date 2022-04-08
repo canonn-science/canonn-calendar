@@ -1,0 +1,80 @@
+<html>
+
+<head>
+    <title>Canonn Calendar</title>
+    <link href='fullcalendar/lib/main.css' rel='stylesheet' />
+
+    <script src='fullcalendar/lib/main.js'></script>
+    <script>
+        function seconds_since_epoch(d) {
+            return Math.floor(d / 1000);
+        }
+
+        //2022-04-07 14:36:24
+
+        function fetch_events(start_dt, interval, url, description) {
+            var d = Date.parse(start_dt);
+            var t = new Date()
+
+            var ref = seconds_since_epoch(d);
+            var cur = seconds_since_epoch(t);
+            var diff = cur - ref;
+            var interval_count = Math.trunc(diff / interval) + 1;
+            var rem = diff % interval;
+            var event_date = ref + (interval_count * interval);
+
+            var results = [];
+            for (let count = 0; count < 90; count++) {
+                dn = new Date(Math.trunc(event_date * 1000));
+                display_dt = dn.toISOString().slice(0, -5);
+                results.push({
+                    title: description,
+                    start: display_dt,
+                    end: display_dt,
+                    url: url
+                }
+                );
+                event_date = event_date + interval;
+            }
+            return results
+        }
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var events = []
+            events = events.concat(fetch_events('07 Apr 2022 18:38:53 UTC', 217290.538549 / 2, 'https://www.edsm.net/en_GB/system/id/31640419/name/Blaa+Eohn+YZ-G+d10-0', 'Blaa Eohn YZ-G d10-0 (Planet of Slightly Lesser Death)'));
+            events = events.concat(fetch_events('24 Mar 2022 12:31:00 UTC', 695478.442, 'https://www.edsm.net/en_GB/system/id/4308078/name/Synuefe+WH-F+c0', 'Synuefe WH-F c0 (Cyanean Rocks)'));
+
+            let yourDate = new Date()
+            today = yourDate.toISOString().split('T')[0]
+
+            console.log(events)
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                //initialView: 'dayGridMonth',
+                initialView: 'listMonth',
+                initialDate: today,
+                height: "100%",
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listMonth'
+                },
+                events: events
+            });
+
+            calendar.render();
+        });
+
+    </script>
+</head>
+
+<body>
+    <h1>Events in your Galaxy</h1>
+    <div id='calendar'></div>
+</body>
+
+</html>
