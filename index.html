@@ -12,14 +12,14 @@
 
         //2022-04-07 14:36:24
 
-        function fetch_events(start_dt, interval,duration, url, description,bgcolour) {
-            var year=31536000;
+        function fetch_events(start_dt, interval, duration, url, description, bgcolour) {
+            var year = 31536000;
             var d = Date.parse(start_dt);
             var t = new Date()
 
-           
 
-            var limit=Math.trunc((year*3)/interval)
+
+            var limit = Math.trunc((year * 3) / interval)
 
             var ref = seconds_since_epoch(d);
             var cur = seconds_since_epoch(t);
@@ -33,19 +33,19 @@
             for (let count = 0; count < limit; count++) {
                 dn = new Date(Math.trunc(event_date * 1000));
                 display_dt = dn.toISOString().slice(0, -5);
-                var result={
+                var result = {
                     title: description,
                     start: display_dt,
                     end: display_dt,
                     url: url
                 };
-                if (duration > 0){
-                    end_dt=new Date(Math.trunc((event_date+duration)*1000));
-                    result["end"]=end_dt.toISOString().slice(0, -5)
+                if (duration > 0) {
+                    end_dt = new Date(Math.trunc((event_date + duration) * 1000));
+                    result["end"] = end_dt.toISOString().slice(0, -5)
                     console.log(result)
                 }
-                if (bgcolour != "defaultbg"){
-                    result["backgroundColor"]=bgcolour;
+                if (bgcolour != "defaultbg") {
+                    result["backgroundColor"] = bgcolour;
                 }
                 results.push(result);
                 event_date = event_date + interval;
@@ -54,20 +54,12 @@
         }
 
 
-        var anniversary=31536000;
+        var anniversary = 31536000;
 
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
-            var events = []
-            events = events.concat(fetch_events('07 Apr 2022 18:38:53 UTC', 217290.538549,0, 'https://www.edsm.net/en_GB/system/id/31640419/name/Blaa+Eohn+YZ-G+d10-0', 'Blaa Eohn YZ-G d10-0 (Planet of Slightly Lesser Death) - Periapsis','defaultbg'));
-            events = events.concat(fetch_events('09 Apr 2022 00:49:00 UTC', 217290.538549,0, 'https://www.edsm.net/en_GB/system/id/31640419/name/Blaa+Eohn+YZ-G+d10-0', 'Blaa Eohn YZ-G d10-0 (Planet of Slightly Lesser Death) - Apoapsis','defaultbg'));
-            events = events.concat(fetch_events('24 Mar 2022 12:31:00 UTC', 695478.442,0, 'https://www.edsm.net/en_GB/system/id/4308078/name/Synuefe+WH-F+c0', 'Synuefe WH-F c0 (Cyanean Rocks)','defaultbg'));
-            events = events.concat(fetch_events('18 May 2021 00:00:00 UTC', anniversary,3600*24, 'https://canonn.science/codex/the-gnosis/', 'Gnosis Launch Anniversary','#ef7b04'));
-
             let yourDate = new Date()
             today = yourDate.toISOString().split('T')[0]
-
-            console.log(events)
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 //initialView: 'dayGridMonth',
@@ -79,7 +71,7 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,listMonth'
                 },
-                events: events
+                events: "https://us-central1-canonn-api-236217.cloudfunctions.net/query/events"
             });
 
             calendar.render();
