@@ -1,0 +1,98 @@
+<html>
+
+<head>
+    <title>Canonn Calendar</title>
+    <link href='fullcalendar/lib/main.css' rel='stylesheet' />
+
+    <script src='fullcalendar/lib/main.js'></script>
+    <script>
+        function seconds_since_epoch(d) {
+            return Math.floor(d / 1000);
+        }
+
+        //2022-04-07 14:36:24
+
+        function fetch_events(start_dt, interval, duration, url, description, bgcolour) {
+            var year = 31536000;
+            var d = Date.parse(start_dt);
+            var t = new Date()
+
+
+
+            var limit = Math.trunc((year * 3) / interval)
+
+            var ref = seconds_since_epoch(d);
+            var cur = seconds_since_epoch(t);
+
+            var diff = cur - ref;
+            var interval_count = Math.trunc(diff / interval) + 1;
+            var rem = diff % interval;
+            var event_date = ref + (interval_count * interval);
+
+            var results = [];
+            for (let count = 0; count < limit; count++) {
+                dn = new Date(Math.trunc(event_date * 1000));
+                display_dt = dn.toISOString().slice(0, -5);
+                var result = {
+                    title: description,
+                    start: display_dt,
+                    end: display_dt,
+                    url: url
+                };
+                if (duration > 0) {
+                    end_dt = new Date(Math.trunc((event_date + duration) * 1000));
+                    result["end"] = end_dt.toISOString().slice(0, -5)
+                    console.log(result)
+                }
+                if (bgcolour != "defaultbg") {
+                    result["backgroundColor"] = bgcolour;
+                }
+                results.push(result);
+                event_date = event_date + interval;
+            }
+            return results
+        }
+
+
+        var anniversary = 31536000;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            let yourDate = new Date()
+            today = yourDate.toISOString().split('T')[0]
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const system = urlParams.get('system')
+            var search = "?system=" + system
+            document.getElementById("headertag").innerHTML = "Events in " + system;
+
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                //initialView: 'dayGridMonth',
+                initialView: 'listYear',
+                initialDate: today,
+                height: "100%",
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    //right: 'dayGridMonth,timeGridWeek,listMonth,listYear'
+                },
+                events: "https://us-central1-canonn-api-236217.cloudfunctions.net/query/events" + search
+            });
+
+            calendar.render();
+        });
+
+    </script>
+</head>
+
+<body>
+    <h1 id="headertag">Events in your Galaxy</h1>
+
+    <p>Dates and times are displayed in your local time</p>
+    <p></p>You can suggest events for inclusion in the calendar by filling in <a
+        href="https://forms.gle/vNtjXs7zkDTDcJJg6">the events form</a> </p>
+    <div id='calendar'></div>
+</body>
+
+</html>
